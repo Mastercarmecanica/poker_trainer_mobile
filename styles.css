@@ -1,0 +1,839 @@
+/* ========================================================
+   POKERDOJO MOBILE - STYLESHEET
+   100% Autocontenido, Mobile-First, Estilo Duolingo Dark Modern
+   ======================================================== */
+
+:root {
+  --bg-main: #0b0f19;
+  --bg-card: #151e2e;
+  --bg-card-subtle: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-subtle: #334155;
+  
+  /* 4 Colores Oficiales */
+  --suit-spade: #0f172a;
+  --suit-heart: #dc2626;
+  --suit-diamond: #2563eb;
+  --suit-club: #16a34a;
+
+  /* Gamificación Duolingo */
+  --gold: #f59e0b;
+  --gold-glow: rgba(245, 158, 11, 0.5);
+  --green-success: #10b981;
+  --red-error: #ef4444;
+  --blue-action: #3b82f6;
+
+  /* Safe Area para Móviles con notch */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  overflow-x: hidden;
+  background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0b0f19 80%);
+}
+
+#app-container {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: calc(72px + var(--safe-bottom));
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+}
+
+/* ========================================================
+   HEADER & GAMIFICATION BAR (Estilo Duolingo)
+   ======================================================== */
+.top-nav {
+  padding-top: calc(12px + var(--safe-top));
+  padding-bottom: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-logo {
+  font-size: 22px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+}
+
+.brand-title {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stats-pill-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #1e293b;
+  padding: 5px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.streak-badge {
+  color: #fb923c;
+  border-color: rgba(251, 146, 60, 0.3);
+}
+
+.streak-fire {
+  animation: pulse-fire 1.4s ease-in-out infinite;
+  display: inline-block;
+}
+
+.xp-badge {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+@keyframes pulse-fire {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.25) rotate(-5deg); }
+}
+
+/* ========================================================
+   CONTENEDOR DE PANTALLAS
+   ======================================================== */
+.view-content {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  padding: 14px 16px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.view-content.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================================
+   COMPONENTES DE CARTAS (Baraja 4 Colores)
+   ======================================================== */
+.card {
+  width: 54px;
+  height: 78px;
+  background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4px 5px;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.card.card-lg {
+  width: 64px;
+  height: 94px;
+  padding: 6px 7px;
+  border-radius: 9px;
+}
+
+.card.card-sm {
+  width: 44px;
+  height: 64px;
+  padding: 3px 4px;
+  border-radius: 6px;
+}
+
+/* Colores de Palos Oficiales */
+.card.suit-s { color: var(--suit-spade); }
+.card.suit-h { color: var(--suit-heart); }
+.card.suit-d { color: var(--suit-diamond); }
+.card.suit-c { color: var(--suit-club); }
+
+.card-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
+
+.card-rank {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.card-lg .card-rank { font-size: 18px; }
+.card-sm .card-rank { font-size: 13px; }
+
+.card-suit-mini {
+  font-size: 11px;
+  margin-top: 1px;
+}
+
+.card-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.card-lg .card-center { font-size: 30px; }
+.card-sm .card-center { font-size: 18px; }
+
+.card-bottom {
+  display: flex;
+  justify-content: flex-end;
+  transform: rotate(180deg);
+  line-height: 1;
+}
+
+/* HIGHLIGHT DORADO PARA LAS 5 CARTAS GANADORAS */
+.card.highlight-winner {
+  transform: translateY(-4px) scale(1.08);
+  box-shadow: 0 0 0 3px #fbbf24, 0 8px 20px rgba(251, 191, 36, 0.6);
+  z-index: 15;
+  background: #ffffff;
+}
+
+.card.highlight-winner::after {
+  content: '★';
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 10px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  font-weight: bold;
+}
+
+.card.highlight-loser {
+  opacity: 0.35;
+  filter: grayscale(0.5);
+  transform: scale(0.96);
+}
+
+/* ==========================================
+   MESA DE POKER VIRTUAL (POKER TABLE)
+   ========================================== */
+.poker-table {
+  background: radial-gradient(ellipse at center, #065f46 0%, #064e3b 60%, #022c22 100%);
+  border: 4px solid #334155;
+  border-radius: 20px;
+  padding: 12px 10px;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.6), 0 8px 16px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.table-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #a7f3d0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.board-cards-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.players-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.player-box {
+  background: rgba(15, 23, 42, 0.75);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.player-box.winner-box {
+  border-color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.3);
+}
+
+.player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 4px;
+}
+
+.player-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+.player-cards {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.player-hand-desc {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-align: center;
+  min-height: 28px;
+  line-height: 1.25;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-hand-desc.active-desc {
+  color: #fbbf24;
+}
+
+/* ==========================================
+   BOTONES DE ACCIÓN (Touch pulgar amigable)
+   ========================================== */
+.action-buttons-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.btn-choice {
+  background: #1e293b;
+  color: #fff;
+  border: 2px solid #334155;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 0 #0f172a;
+}
+
+.btn-choice:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #0f172a;
+}
+
+.btn-choice.correct {
+  background: #059669;
+  border-color: #10b981;
+  box-shadow: 0 4px 0 #047857;
+  color: #ffffff;
+}
+
+.btn-choice.incorrect {
+  background: #dc2626;
+  border-color: #ef4444;
+  box-shadow: 0 4px 0 #b91c1c;
+  color: #ffffff;
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+/* ==========================================
+   FEEDBACK MODAL / CARD (Estilo Duolingo)
+   ========================================== */
+.feedback-card {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.feedback-card.active {
+  display: flex;
+}
+
+.feedback-card.success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 2px solid #10b981;
+}
+
+.feedback-card.error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 2px solid #ef4444;
+}
+
+.feedback-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.feedback-title {
+  font-size: 16px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.feedback-title.success-text { color: #34d399; }
+.feedback-title.error-text { color: #f87171; }
+
+.feedback-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 3px 8px;
+  border-radius: 9999px;
+  color: #e2e8f0;
+}
+
+.feedback-explanation {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #cbd5e1;
+}
+
+.feedback-explanation strong {
+  color: #fbbf24;
+}
+
+.btn-next-action {
+  background: #f59e0b;
+  color: #0f172a;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #b45309;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  margin-top: 4px;
+}
+
+.btn-next-action:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #b45309;
+}
+
+/* ==========================================
+   LEVEL SELECTOR BAR & CONTROLS
+   ========================================== */
+.level-selector-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  background: #1e293b;
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.level-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.level-btn.active {
+  background: #0f172a;
+  color: #fbbf24;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.level-progress-tracker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.progress-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: #1e293b;
+  border-radius: 9999px;
+  margin-left: 10px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #f59e0b);
+  border-radius: 9999px;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* ==========================================
+   MODO 2: ENTRENA TU OJO
+   ========================================== */
+.eye-hero-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.hero-hand-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: #151e2e;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 10px 14px;
+  width: 100%;
+}
+
+.options-grid-2x2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* ==========================================
+   MODO 3: SEMÁFORO PREFLOP
+   ========================================== */
+.preflop-card-display {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.preflop-hud {
+  background: #151e2e;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hud-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hud-label {
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.hud-val {
+  font-size: 14px;
+  color: #f8fafc;
+  font-weight: 800;
+}
+
+.traffic-buttons-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.traffic-btn {
+  flex: 1;
+  padding: 16px 8px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: #fff;
+  border: none;
+}
+
+.traffic-btn.fold-btn {
+  background: #dc2626;
+  box-shadow: 0 4px 0 #991b1b;
+}
+
+.traffic-btn.call-btn {
+  background: #d97706;
+  box-shadow: 0 4px 0 #92400e;
+}
+
+.traffic-btn.raise-btn {
+  background: #16a34a;
+  box-shadow: 0 4px 0 #15803d;
+}
+
+.traffic-btn:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+
+/* ==========================================
+   MODO 4: TABLA DE JERARQUÍA (Acordeón)
+   ========================================== */
+.hierarchy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  max-height: calc(100vh - 160px);
+  padding-bottom: 20px;
+}
+
+.hierarchy-item {
+  background: #151e2e;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hierarchy-item.expanded {
+  border-color: #f59e0b;
+  background: #1a2538;
+}
+
+.hierarchy-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rank-badge {
+  background: #1e293b;
+  color: #fbbf24;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.hierarchy-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #f8fafc;
+  flex: 1;
+  margin-left: 10px;
+}
+
+.hierarchy-chevron {
+  font-size: 12px;
+  color: #94a3b8;
+  transition: transform 0.2s;
+}
+
+.hierarchy-item.expanded .hierarchy-chevron {
+  transform: rotate(180deg);
+}
+
+.hierarchy-details {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #334155;
+}
+
+.hierarchy-item.expanded .hierarchy-details {
+  display: flex;
+}
+
+.hierarchy-cards-preview {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.hierarchy-rule-box {
+  background: rgba(0, 0, 0, 0.25);
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #cbd5e1;
+}
+
+.hierarchy-rule-box strong {
+  color: #fbbf24;
+}
+
+/* ==========================================
+   BOTTOM NAVIGATION BAR (Tabs tipo App Móvil)
+   ========================================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-around;
+  padding-top: 8px;
+  padding-bottom: calc(8px + var(--safe-bottom));
+  z-index: 50;
+}
+
+.nav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s ease;
+}
+
+.nav-tab.active {
+  color: #fbbf24;
+}
+
+.nav-icon {
+  font-size: 20px;
+  position: relative;
+}
+
+.nav-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+/* ==========================================
+   CANVAS DE CONFETI NATIVO
+   ========================================== */
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 100;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}

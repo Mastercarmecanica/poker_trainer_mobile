@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="PokerDojo Mobile: Aprende a identificar jugadas de Texas Hold'em al estilo Duolingo con baraja de 4 colores.">
+  <title>PokerDojo Mobile 🥋 | Texas Hold'em Trainer</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%230f172a' stroke='%23f59e0b' stroke-width='4'/><text x='50' y='65' font-size='45' text-anchor='middle' fill='%23fbbf24'>♠</text></svg>">
+</head>
+<body>
+
+  <!-- Contenedor de la Aplicación Móvil -->
+  <div id="app-container">
+    
+    <!-- BARRA SUPERIOR GAMIFICADA (Estilo Duolingo) -->
+    <header class="top-nav">
+      <div class="brand-section">
+        <span class="brand-logo">🥋</span>
+        <span class="brand-title">PokerDojo</span>
+      </div>
+
+      <div class="stats-pill-container">
+        <!-- Racha de Aciertos -->
+        <div class="stat-badge streak-badge" id="streak-counter" title="Racha de aciertos seguidos">
+          <span class="streak-fire">🔥</span>
+          <span id="streak-val">0</span>
+        </div>
+
+        <!-- Puntos XP -->
+        <div class="stat-badge xp-badge" id="xp-counter" title="Puntos de Experiencia">
+          <span>⚡</span>
+          <span id="xp-val">0</span>
+        </div>
+
+        <!-- Botón de Audio / Efectos -->
+        <button id="btn-toggle-sound" class="stat-badge" style="cursor: pointer; background: #1e293b; color: #94a3b8;" title="Activar/Desactivar Sonido">
+          <span id="sound-icon">🔊</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ========================================================
+         MODO 1: ¿QUIÉN GANA EL POZO? (Comparación de Combinaciones)
+         ======================================================== -->
+    <main id="view-mode1" class="view-content active">
+      
+      <!-- Selector de Nivel Progresivo -->
+      <div class="level-selector-row">
+        <button class="level-btn active" data-level="1">
+          <span>🐣 Nivel 1</span>
+          <small>Novato</small>
+        </button>
+        <button class="level-btn" data-level="2">
+          <span>🎯 Nivel 2</span>
+          <small>Kickers</small>
+        </button>
+        <button class="level-btn" data-level="3">
+          <span>🧠 Nivel 3</span>
+          <small>Trampas</small>
+        </button>
+        <button class="level-btn" data-level="random">
+          <span>🎲 Infinito</span>
+          <small>Aleatorio</small>
+        </button>
+      </div>
+
+      <!-- Barra de Progreso de la Lección Actual -->
+      <div class="level-progress-tracker">
+        <span id="lesson-label">Lección 1 / 10</span>
+        <div class="progress-bar-bg">
+          <div id="lesson-progress-fill" class="progress-bar-fill" style="width: 10%;"></div>
+        </div>
+      </div>
+
+      <!-- MESA VIRTUAL DE POKER -->
+      <div class="poker-table">
+        <div class="table-label">
+          <span>🌿 COMUNITARIAS (BOARD)</span>
+        </div>
+        
+        <!-- Las 5 Cartas del Board -->
+        <div class="board-cards-wrapper" id="board-cards-container">
+          <!-- Renderizado dinámico de cartas -->
+        </div>
+
+        <!-- Jugador A vs Jugador B -->
+        <div class="players-container">
+          <!-- Jugador A -->
+          <div class="player-box" id="box-player-a">
+            <div class="player-header">
+              <span class="player-title">Jugador A</span>
+              <span class="feedback-badge" id="badge-player-a">En juego</span>
+            </div>
+            <div class="player-cards" id="cards-player-a"></div>
+            <div class="player-hand-desc" id="desc-player-a">¿Qué mano tiene?</div>
+          </div>
+
+          <!-- Jugador B -->
+          <div class="player-box" id="box-player-b">
+            <div class="player-header">
+              <span class="player-title">Jugador B</span>
+              <span class="feedback-badge" id="badge-player-b">En juego</span>
+            </div>
+            <div class="player-cards" id="cards-player-b"></div>
+            <div class="player-hand-desc" id="desc-player-b">¿Qué mano tiene?</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTONES DE DECISIÓN DEL USUARIO -->
+      <div class="action-buttons-grid" id="duel-action-buttons">
+        <button class="btn-choice" id="btn-choose-a">
+          <span>🏆</span>
+          <span>Gana Jugador A</span>
+        </button>
+        <button class="btn-choice" id="btn-choose-tie">
+          <span>🤝</span>
+          <span>Empate (Split Pot)</span>
+        </button>
+        <button class="btn-choice" id="btn-choose-b">
+          <span>🏆</span>
+          <span>Gana Jugador B</span>
+        </button>
+      </div>
+
+      <!-- TARJETA EDUCATIVA DE FEEDBACK INMEDIATO -->
+      <div class="feedback-card" id="feedback-card-mode1">
+        <div class="feedback-header">
+          <div class="feedback-title" id="feedback-title-mode1">¡Correcto!</div>
+          <span class="feedback-badge" id="feedback-badge-mode1">+10 XP</span>
+        </div>
+        <p class="feedback-explanation" id="feedback-exp-mode1">
+          Explicación pedagógica detallada.
+        </p>
+        <button class="btn-next-action" id="btn-next-mode1">
+          <span>Siguiente Mano</span>
+          <span>➔</span>
+        </button>
+      </div>
+    </main>
+
+    <!-- ========================================================
+         MODO 2: ENTRENA TU OJO (Lectura Rápida)
+         ======================================================== -->
+    <section id="view-mode2" class="view-content">
+      <div style="text-align: center; margin-bottom: 10px;">
+        <h2 style="font-size: 16px; font-weight: 800; color: #fbbf24;">🎯 Entrena tu Ojo</h2>
+        <p style="font-size: 12px; color: #94a3b8;">Identifica tu mejor combinación en menos de 3 segundos</p>
+      </div>
+
+      <div class="poker-table">
+        <div class="table-label"><span>TUS 2 CARTAS DE MANO</span></div>
+        <div class="player-cards" id="eye-hole-cards" style="margin-bottom: 6px;"></div>
+
+        <div class="table-label"><span>CARTAS EN LA MESA</span></div>
+        <div class="board-cards-wrapper" id="eye-board-cards"></div>
+      </div>
+
+      <!-- 4 Opciones Rápidas en Cuadrícula -->
+      <div class="options-grid-2x2" id="eye-options-container">
+        <!-- Opciones generadas dinámicamente -->
+      </div>
+
+      <!-- Feedback de Ojo -->
+      <div class="feedback-card" id="feedback-card-mode2">
+        <div class="feedback-header">
+          <div class="feedback-title" id="feedback-title-mode2">¡Bien visto!</div>
+          <span class="feedback-badge" id="feedback-badge-mode2">+15 XP</span>
+        </div>
+        <p class="feedback-explanation" id="feedback-exp-mode2"></p>
+        <button class="btn-next-action" id="btn-next-mode2">
+          <span>Siguiente Situación</span>
+          <span>➔</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         MODO 3: SEMÁFORO PREFLOP (Decisiones GTO / Pro)
+         ======================================================== -->
+    <section id="view-mode3" class="view-content">
+      <div style="text-align: center; margin-bottom: 8px;">
+        <h2 style="font-size: 16px; font-weight: 800; color: #34d399;">🚦 Semáforo Preflop</h2>
+        <p style="font-size: 12px; color: #94a3b8;">¿Qué jugaría un profesional en esta posición?</p>
+      </div>
+
+      <!-- HUD de Situación Preflop -->
+      <div class="preflop-hud">
+        <div class="hud-item">
+          <span class="hud-label">📍 Posición:</span>
+          <span class="hud-val" id="preflop-pos" style="color: #60a5fa;">BTN (Botón)</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">💡 Situación:</span>
+          <span class="hud-val" id="preflop-desc" style="font-size: 12px; font-weight: 600;">Todos foldean hasta ti</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">🪙 Tu Fichero:</span>
+          <span class="hud-val" id="preflop-stack" style="color: #fbbf24;">40 BB</span>
+        </div>
+      </div>
+
+      <!-- Cartas de Mano -->
+      <div class="preflop-card-display" id="preflop-cards-container">
+        <!-- Render dinámico -->
+      </div>
+
+      <!-- Botones del Semáforo Preflop -->
+      <div class="traffic-buttons-row" id="preflop-traffic-buttons">
+        <button class="traffic-btn fold-btn" data-action="FOLD">
+          <span style="font-size: 20px;">🔴</span>
+          <span>FOLD</span>
+          <small style="opacity: 0.85; font-size: 10px;">Tirar Mano</small>
+        </button>
+
+        <button class="traffic-btn call-btn" data-action="CALL">
+          <span style="font-size: 20px;">🟡</span>
+          <span>CALL</span>
+          <small style="opacity: 0.85; font-size: 10px;">Pagar / Check</small>
+        </button>
+
+        <button class="traffic-btn raise-btn" data-action="RAISE">
+          <span style="font-size: 20px;">🟢</span>
+          <span>RAISE</span>
+          <small style="opacity: 0.85; font-size: 10px;">Subir / All-in</small>
+        </button>
+      </div>
+
+      <!-- Feedback Preflop -->
+      <div class="feedback-card" id="feedback-card-mode3">
+        <div class="feedback-header">
+          <div class="feedback-title" id="feedback-title-mode3">¡Decisión Correcta!</div>
+          <span class="feedback-badge" id="feedback-badge-mode3">+10 XP</span>
+        </div>
+        <p class="feedback-explanation" id="feedback-exp-mode3"></p>
+        <button class="btn-next-action" id="btn-next-mode3">
+          <span>Siguiente Mano Preflop</span>
+          <span>➔</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         MODO 4: JERARQUÍA INTERACTIVA (Acordeón de Bolsillo)
+         ======================================================== -->
+    <section id="view-mode4" class="view-content">
+      <div style="text-align: center; margin-bottom: 10px;">
+        <h2 style="font-size: 16px; font-weight: 800; color: #fbbf24;">📖 Jerarquía de Manos</h2>
+        <p style="font-size: 12px; color: #94a3b8;">Del #1 al #10: Toca cada jugada para ver detalles y reglas</p>
+      </div>
+
+      <div class="hierarchy-list" id="hierarchy-list-container">
+        <!-- Generado dinámicamente con las 10 combinaciones -->
+      </div>
+    </section>
+
+    <!-- BARRA DE NAVEGACIÓN INFERIOR (Pestañas estilo App Nativa) -->
+    <nav class="bottom-nav">
+      <button class="nav-tab active" data-tab="mode1">
+        <span class="nav-icon">⚔️</span>
+        <span class="nav-label">¿Quién Gana?</span>
+      </button>
+
+      <button class="nav-tab" data-tab="mode2">
+        <span class="nav-icon">👁️</span>
+        <span class="nav-label">Entrena Ojo</span>
+      </button>
+
+      <button class="nav-tab" data-tab="mode3">
+        <span class="nav-icon">🚦</span>
+        <span class="nav-label">Preflop</span>
+      </button>
+
+      <button class="nav-tab" data-tab="mode4">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Jerarquía</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Canvas para Confeti -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Scripts -->
+  <script src="poker_engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
